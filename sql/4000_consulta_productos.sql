@@ -17,3 +17,16 @@ ORDER BY product_key;
 
 
 -- TU TURNO: agregá acá tus consultas.
+
+
+
+
+
+
+
+
+
+
+
+
+

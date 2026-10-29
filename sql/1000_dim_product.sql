@@ -62,3 +62,16 @@ LEFT JOIN raw.product_category AS f ON f.category_id = c.parent_id;    -- famili
 --       CAST(strftime(fecha, '%Y%m%d') AS INTEGER)
 --   * Si algo puede venir vacío (ej. NPS anónimos, sin cliente), podés agregar
 --     una fila "Desconocido" con clave -1 y usar COALESCE(clave, -1) en los hechos.
+
+-- Dimension canal: una fila por canal de venta.
+
+
+
+
+
+
+
+
+
+
+
