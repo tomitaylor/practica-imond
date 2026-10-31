@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBottle | Reporte comercial</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+    <header>
+        <div>
+            <p class="etiqueta">ECOBOTTLE AR</p>
+            <h1>Reporte comercial</h1>
+            <p>Ventas, actividad digital y satisfacción del cliente.</p>
+        </div>
+        <span class="periodo">Enero 2024 — Septiembre 2025</span>
+    </header>
+
+    <main>
+        <p id="estado" role="status">Cargando datos...</p>
+
+        <form id="filtros" class="filtros">
+            <label>
+                Desde
+                <input type="date" id="fecha-desde">
+            </label>
+            <label>
+                Hasta
+                <input type="date" id="fecha-hasta">
+            </label>
+            <label>
+                Canal
+                <select id="canal">
+                    <option value="">Todos</option>
+                </select>
+            </label>
+            <label>
+                Provincia
+                <select id="provincia">
+                    <option value="">Todas</option>
+                </select>
+            </label>
+            <label>
+                Producto
+                <select id="producto">
+                    <option value="">Todos</option>
+                </select>
+            </label>
+            <button type="reset">Restablecer</button>
+        </form>
+
+        <section class="indicadores" aria-label="Indicadores principales">
+            <article class="tarjeta">
+                <h2>Ventas totales</h2>
+                <p id="kpi-ventas" class="valor">—</p>
+                <small>ARS · incluye IVA y envío</small>
+            </article>
+            <article class="tarjeta">
+                <h2>Usuarios activos</h2>
+                <p id="kpi-usuarios" class="valor">—</p>
+                <small>Identificados únicos + sesiones anónimas</small>
+            </article>
+            <article class="tarjeta">
+                <h2>Ticket promedio</h2>
+                <p id="kpi-ticket" class="valor">—</p>
+                <small>Ventas / pedidos válidos</small>
+            </article>
+            <article class="tarjeta">
+                <h2>NPS</h2>
+                <p id="kpi-nps" class="valor">—</p>
+                <small>Promotores menos detractores · escala −100 a 100</small>
+            </article>
+        </section>
+
+        <p id="alcance-filtros" class="nota"></p>
+
+        <section class="graficos" aria-label="Evolución y distribución">
+            <article class="panel">
+                <h2>Evolución de ventas</h2>
+                <div id="grafico-ventas"></div>
+            </article>
+            <article class="panel">
+                <h2>Usuarios activos por mes</h2>
+                <div id="grafico-usuarios"></div>
+            </article>
+            <article class="panel">
+                <h2>Evolución del NPS</h2>
+                <div id="grafico-nps"></div>
+            </article>
+            <article class="panel">
+                <h2>Ventas por provincia</h2>
+                <div id="grafico-provincias"></div>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="encabezado-panel">
+                <h2>Ranking mensual por producto</h2>
+                <label>
+                    Mostrar
+                    <select id="top-n">
+                        <option value="1">Top 1</option>
+                        <option value="2" selected>Top 2</option>
+                    </select>
+                </label>
+            </div>
+            <p class="nota">Importes después de descuentos, sin IVA ni envío.</p>
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Mes</th>
+                            <th scope="col">Posición</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Unidades</th>
+                            <th scope="col">Ventas de productos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Fuente: marts generados desde el modelo estrella de EcoBottle.
+        Montos expresados en pesos argentinos.
+    </footer>
+</body>
+</html>
