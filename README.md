@@ -21,6 +21,7 @@ python -m http.server 8000
 
 Abrir [el tablero local](http://localhost:8000/web/). Si el entorno virtual ya existe, alcanza con activarlo. Los filtros de fechas trabajan con meses completos.
 
+- [Diccionario de datos: grano, columnas, claves, dominios y supuestos](docs/diccionario_datos.md).
 - [Arquitectura, métricas, filtros y límites del tablero](docs/arquitectura_tablero.md).
 - [Diagrama del modelo generado por el ETL](dw/modelo_estrella.md).
 
@@ -168,11 +169,14 @@ DESCRIBE raw.sales_order;
 
 | Archivo | Qué va adentro |
 |---|---|
-| `sql/01_dimensiones.sql` | Las tablas de dimensiones. Tiene un **ejemplo resuelto** (`dim_product`) para que veas cómo se hace. |
-| `sql/02_hechos.sql` | Las tablas de hechos, con sus `FOREIGN KEY` hacia las dimensiones. |
-| `sql/03_consultas.sql` | Consultas para revisar el modelo y calcular los KPIs. |
+| `sql/1000_*.sql` a `sql/1060_*.sql` | Dimensiones, separadas por tabla. `1000_dim_product.sql` conserva el ejemplo del profesor. |
+| `sql/2000_*.sql` a `sql/2050_*.sql` | Hechos, separados por proceso y con sus FK hacia dimensiones. |
+| `sql/2900_periodos_reporte.sql` | Intervalos mensuales y opciones de filtros. |
+| `sql/3000_*.sql` a `sql/3040_*.sql` | Marts con indicadores, rankings y gráficos precalculados. |
+| `sql/4000_*.sql` a `sql/4040_*.sql` | Consultas de productos y KPIs para revisar resultados. |
+| `sql/9000_validaciones.sql` | Conciliación entre origen, hechos y marts. |
 
-Cuando una consulta te funciona mientras explorás, pasala al archivo que corresponde. Podés agregar más archivos: se ejecutan en orden alfabético (`01_...`, `02_...`, `03_...`).
+Cuando una consulta te funciona mientras explorás, pasala al archivo que corresponde. Podés agregar más archivos: se ejecutan en orden alfabético (`1000_...`, `2000_...`, `3000_...`).
 
 ### 4. Armar el data warehouse
 
@@ -184,7 +188,7 @@ Esto hace cuatro cosas:
 
 1. Crea la base de datos `warehouse.duckdb` desde cero.
 2. Ejecuta tus archivos de `sql/` en orden y muestra en la terminal el resultado de cada `SELECT`.
-3. Guarda cada tabla que creaste como CSV en `dw/`. **Esos CSV son los que después abrís en Power BI.**
+3. Guarda cada tabla que creaste como CSV en `dw/`. **El tablero web consume únicamente los CSV `mart_*.csv`, con los cálculos resueltos por el ETL.**
 4. Dibuja tu modelo estrella en `dw/modelo_estrella.md`.
 
 Si hay un error, te dice en qué archivo y en qué sentencia está y por qué falló. Lo corregís y volvés a ejecutar. Como todo se arma desde cero cada vez, no hace falta borrar tablas a mano.
