@@ -29,23 +29,21 @@ SELECT
     (SELECT COUNT(*) FROM raw.nps_response),
     (SELECT COUNT(*) FROM fact_nps);
 
-    SELECT
-    (SELECT SUM(total_amount) FROM mart_sales)
-        AS ventas_mart,
-    (
-        SELECT SUM(total_amount)
-        FROM fact_order
-        WHERE status IN ('PAID', 'FULFILLED')
-    ) AS ventas_modelo,
-    (SELECT SUM(ventas_producto) FROM mart_products)
-        AS productos_mart,
-    (SELECT SUM(subtotal) FROM mart_sales)
-        AS subtotal_pedidos,
-    (
-        SELECT ROUND(
-            SUM(total_amount) / NULLIF(COUNT(*), 0),
-            2
-        )
-        FROM mart_sales
-    ) AS ticket_promedio;
-    
+SELECT
+    s.ventas_totales AS ventas_mart,
+    (SELECT SUM(total_amount) FROM fact_order
+     WHERE status IN ('PAID', 'FULFILLED')) AS ventas_modelo,
+    (SELECT SUM(ventas_producto) FROM mart_products
+     WHERE canal = '' AND provincia = '') AS productos_mart,
+    s.subtotal AS subtotal_pedidos,
+    s.ticket_promedio,
+    a.usuarios_activos AS usuarios_mart,
+    (SELECT COUNT(DISTINCT visitor_key) FROM fact_web_session) AS usuarios_modelo,
+    n.nps AS nps_mart,
+    (SELECT ROUND(AVG(nps_value) * 100, 2) FROM fact_nps) AS nps_modelo
+FROM mart_sales AS s
+JOIN mart_activity AS a USING (desde, hasta)
+JOIN mart_nps AS n USING (desde, hasta, canal)
+WHERE s.desde = (SELECT MIN(desde) FROM mart_periods)
+  AND s.hasta = (SELECT MAX(hasta) FROM mart_periods)
+  AND s.canal = '' AND s.provincia = '';

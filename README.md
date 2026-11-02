@@ -5,6 +5,27 @@ Este repositorio tiene los datos de **EcoBottle AR** para la práctica.
 - **Consigna:** [Práctica](https://docs.google.com/document/d/15RNP3FVqLjO4jzh80AAkK6mUR5DOLqPxLjQxqvdzrYg/edit?usp=sharing)
 - **Diagrama de las tablas de origen (DER):** [ver más abajo](#diagrama-de-las-tablas-de-origen-der)
 
+## Implementación del trabajo
+
+El modelo estrella se construye con los módulos SQL de dimensiones y hechos. Los marts contienen los indicadores, rankings y gráficos ya calculados; el tablero HTML, CSS y JavaScript solo selecciona y muestra esos datos.
+
+Para ejecutar desde la carpeta del repositorio en macOS:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python run_sql.py
+python -m http.server 8000
+```
+
+Abrir [el tablero local](http://localhost:8000/web/). Si el entorno virtual ya existe, alcanza con activarlo. Los filtros de fechas trabajan con meses completos.
+
+- [Arquitectura, métricas, filtros y límites del tablero](docs/arquitectura_tablero.md).
+- [Diagrama del modelo generado por el ETL](dw/modelo_estrella.md).
+
+La información original del repositorio del profesor se conserva a continuación.
+
 ## ¿Qué hay en el repositorio?
 
 ```

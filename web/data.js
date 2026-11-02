@@ -69,7 +69,10 @@ export async function cargarDatos() {
         "mart_sales",
         "mart_products",
         "mart_activity",
-        "mart_nps"
+        "mart_nps",
+        "mart_periods",
+        "mart_filters",
+        "mart_charts"
     ];
 
     const tablas = await Promise.all(nombres.map(cargarCSV));

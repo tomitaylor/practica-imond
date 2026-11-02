@@ -23,11 +23,11 @@
         <form id="filtros" class="filtros">
             <label>
                 Desde
-                <input type="date" id="fecha-desde">
+                <input type="month" required id="fecha-desde">
             </label>
             <label>
                 Hasta
-                <input type="date" id="fecha-hasta">
+                <input type="month" required id="fecha-hasta">
             </label>
             <label>
                 Canal
@@ -77,7 +77,7 @@
 
         <section class="graficos" aria-label="Evolución y distribución">
             <article class="panel">
-                <h2>Evolución de ventas</h2>
+                <h2>Evolución de ventas · millones de ARS</h2>
                 <div id="grafico-ventas"></div>
             </article>
             <article class="panel">

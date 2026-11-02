@@ -274,3 +274,13 @@ footer {
     background: #237855;
     border-radius: 5px;
 }
+.graficos svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+details {
+    margin-top: 16px;
+    overflow-x: auto;
+}

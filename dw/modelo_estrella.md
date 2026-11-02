@@ -183,40 +183,62 @@ erDiagram
         VARCHAR device
     }
     mart_activity {
-        BIGINT session_id
-        DATE fecha
-        VARCHAR visitor_key
-        VARCHAR fuente
-        VARCHAR dispositivo
+        VARCHAR desde
+        VARCHAR hasta
+        BIGINT usuarios_activos
+        BIGINT usuarios_identificados
+        BIGINT sesiones_anonimas
+        DOUBLE usuarios_miles
+    }
+    mart_charts {
+        VARCHAR desde
+        VARCHAR hasta
+        VARCHAR canal
+        VARCHAR provincia
+        VARCHAR grafico
+        VARCHAR contenido
+    }
+    mart_filters {
+        VARCHAR tipo
+        VARCHAR valor
+        VARCHAR etiqueta
     }
     mart_nps {
-        BIGINT nps_id
-        DATE fecha
+        VARCHAR desde
+        VARCHAR hasta
         VARCHAR canal
-        SMALLINT puntaje
-        VARCHAR segmento
-        SMALLINT nps_value
+        BIGINT respuestas
+        BIGINT promotores
+        BIGINT detractores
+        DOUBLE nps
+    }
+    mart_periods {
+        VARCHAR desde
+        VARCHAR hasta
+        DATE fecha_desde
+        DATE fecha_hasta
     }
     mart_products {
-        BIGINT order_item_id
-        BIGINT order_id
-        DATE fecha
+        VARCHAR mes
         VARCHAR canal
         VARCHAR provincia
-        INTEGER product_id
+        VARCHAR product_id
         VARCHAR producto
-        VARCHAR categoria
-        INTEGER unidades
+        HUGEINT unidades
         DECIMAL ventas_producto
+        BIGINT posicion
     }
     mart_sales {
-        BIGINT order_id
-        DATE fecha
+        VARCHAR desde
+        VARCHAR hasta
         VARCHAR canal
         VARCHAR provincia
+        BIGINT pedidos_validos
+        DECIMAL ventas_totales
         DECIMAL subtotal
-        DECIMAL tax_amount
-        DECIMAL shipping_fee
-        DECIMAL total_amount
+        DOUBLE ventas_millones
+        DOUBLE ticket_promedio
+        DOUBLE ticket_miles
+        DOUBLE ancho_barra
     }
 ```
