@@ -92,6 +92,18 @@ Una sesión anónima no equivale necesariamente a una persona diferente. La mét
 
 `9000_validaciones.sql` compara cantidades de origen y hechos y concilia ventas, productos, usuarios y NPS del intervalo completo. Leer el origen en estos controles no lo convierte en fuente del tablero.
 
+Además, muestra una tabla de diez controles con una columna `inconsistencias`. Todas las filas deben dar **0**:
+
+- Subtotal del pedido diferente de la suma de sus líneas.
+- Total diferente de subtotal + IVA + envío.
+- Pedidos sin líneas.
+- Claves lógicas duplicadas en cada uno de los siete marts.
+
+Los controles de importes abarcan todos los estados del pedido, no solo las ventas válidas. El control de subtotal compara pedidos que tienen líneas; el control siguiente detecta los que no tienen ninguna. En los marts se cuentan claves duplicadas, no la cantidad de copias adicionales. Las filas de distintos niveles de total o intervalos son legítimas y se distinguen por su clave completa.
+
+Estos controles muestran resultados para revisar: no agregan restricciones físicas a los marts ni detienen automáticamente el proceso si aparece una inconsistencia. Si algún valor es mayor que cero, revisar los SQL antes de publicar los CSV.
+
+
 | Medida | Enero 2024–septiembre 2025, sin otros filtros |
 |---|---:|
 | Pedidos válidos | 10.998 |

@@ -47,3 +47,100 @@ JOIN mart_nps AS n USING (desde, hasta, canal)
 WHERE s.desde = (SELECT MIN(desde) FROM mart_periods)
   AND s.hasta = (SELECT MAX(hasta) FROM mart_periods)
   AND s.canal = '' AND s.provincia = '';
+
+WITH lineas_por_pedido AS (
+    SELECT order_id, SUM(line_total) AS suma_lineas
+    FROM fact_order_item
+    GROUP BY order_id
+)
+SELECT
+    'subtotal_distinto_de_lineas' AS control,
+    COUNT(*) AS inconsistencias
+FROM fact_order AS o
+JOIN lineas_por_pedido AS i ON i.order_id = o.order_id
+WHERE o.subtotal <> i.suma_lineas
+UNION ALL
+SELECT
+    'total_distinto_de_subtotal_iva_envio',
+    COUNT(*)
+FROM fact_order
+WHERE total_amount <> subtotal + tax_amount + shipping_fee
+UNION ALL
+SELECT
+    'pedidos_sin_lineas',
+    COUNT(*)
+FROM fact_order AS o
+WHERE NOT EXISTS (
+    SELECT 1 FROM fact_order_item AS i WHERE i.order_id = o.order_id
+)
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_sales',
+    COUNT(*)
+FROM (
+    SELECT desde, hasta, canal, provincia
+    FROM mart_sales
+    GROUP BY desde, hasta, canal, provincia
+    HAVING COUNT(*) > 1
+) AS duplicados_sales
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_activity',
+    COUNT(*)
+FROM (
+    SELECT desde, hasta
+    FROM mart_activity
+    GROUP BY desde, hasta
+    HAVING COUNT(*) > 1
+) AS duplicados_activity
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_nps',
+    COUNT(*)
+FROM (
+    SELECT desde, hasta, canal
+    FROM mart_nps
+    GROUP BY desde, hasta, canal
+    HAVING COUNT(*) > 1
+) AS duplicados_nps
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_products',
+    COUNT(*)
+FROM (
+    SELECT mes, canal, provincia, product_id
+    FROM mart_products
+    GROUP BY mes, canal, provincia, product_id
+    HAVING COUNT(*) > 1
+) AS duplicados_products
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_periods',
+    COUNT(*)
+FROM (
+    SELECT desde, hasta
+    FROM mart_periods
+    GROUP BY desde, hasta
+    HAVING COUNT(*) > 1
+) AS duplicados_periods
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_filters',
+    COUNT(*)
+FROM (
+    SELECT tipo, valor
+    FROM mart_filters
+    GROUP BY tipo, valor
+    HAVING COUNT(*) > 1
+) AS duplicados_filters
+UNION ALL
+SELECT
+    'claves_duplicadas_mart_charts',
+    COUNT(*)
+FROM (
+    SELECT desde, hasta, canal, provincia, grafico
+    FROM mart_charts
+    GROUP BY desde, hasta, canal, provincia, grafico
+    HAVING COUNT(*) > 1
+) AS duplicados_charts
+ORDER BY control;

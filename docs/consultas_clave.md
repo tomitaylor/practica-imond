@@ -10,7 +10,7 @@ Las consultas siguientes se ejecutan en DuckDB después de `python run_sql.py`. 
 | [4020_kpi_activity.sql](../sql/4020_kpi_activity.sql) | Usuarios activos por mes |
 | [4030_kpi_nps.sql](../sql/4030_kpi_nps.sql) | Respuestas y NPS mensual por canal |
 | [4040_kpi_products.sql](../sql/4040_kpi_products.sql) | Unidades, ventas y posición mensual por producto |
-| [9000_validaciones.sql](../sql/9000_validaciones.sql) | Cantidades de origen y hechos; conciliación entre marts y modelo |
+| [9000_validaciones.sql](../sql/9000_validaciones.sql) | Cantidades de origen y hechos, conciliación de KPIs, importes por pedido, pedidos sin líneas y claves de marts duplicadas |
 
 Estos archivos se ejecutan automáticamente en cada reconstrucción. Los módulos `3000` a `3040` calculan y materializan los resultados que utiliza el tablero.
 
@@ -145,3 +145,24 @@ Sport B: $162.717.000,00, 11.047 unidades, primero en 12 meses. Classic A: $147.
 ## Evitar duplicaciones al consultar marts
 
 En `mart_sales` hay filas para distintos intervalos y distintos niveles de canal y provincia. Sumar todas las filas del archivo duplica las ventas. Seleccionar siempre un intervalo y el nivel de agregación que se necesita. Lo mismo se aplica a NPS, actividad y gráficos. Para el ranking, elegir un único nivel de canal y provincia dentro de cada mes.
+
+## Controles de integridad incluidos en el ETL
+
+La tercera consulta de `9000_validaciones.sql` devuelve diez filas con las columnas `control` e `inconsistencias`. Su resultado esperado es cero en todos los casos.
+
+| Control | Qué detecta |
+|---|---|
+| `subtotal_distinto_de_lineas` | El subtotal no coincide con las líneas del pedido |
+| `total_distinto_de_subtotal_iva_envio` | El total de cabecera no cierra con sus componentes |
+| `pedidos_sin_lineas` | Un pedido no tiene ningún ítem |
+| `claves_duplicadas_mart_sales` | Más de una fila por desde, hasta, canal y provincia |
+| `claves_duplicadas_mart_activity` | Más de una fila por desde y hasta |
+| `claves_duplicadas_mart_nps` | Más de una fila por desde, hasta y canal |
+| `claves_duplicadas_mart_products` | Más de una fila por mes, canal, provincia y producto |
+| `claves_duplicadas_mart_periods` | Intervalos desde/hasta repetidos |
+| `claves_duplicadas_mart_filters` | Una misma opción repetida dentro de su tipo de filtro |
+| `claves_duplicadas_mart_charts` | Más de un gráfico del mismo tipo e intervalo para los mismos filtros |
+
+Las igualdades de importes se evalúan con las columnas DECIMAL del modelo. Los duplicados se buscan usando la clave completa de cada mart; no se considera un error que un mismo mes aparezca en diferentes intervalos o que exista una fila total junto con las de canales específicos.
+
+Para ejecutarlos, usar `python run_sql.py` y revisar la tabla final de controles antes del listado de archivos exportados. Estos SELECT informan inconsistencias; no abortan la exportación por sí mismos.
