@@ -49,7 +49,7 @@ python run_sql.py --ui
 | Ruta o módulos | Función |
 |---|---|
 | `raw/` | Los 13 CSV de origen proporcionados por el profesor |
-| `sql/1000_*.sql` a `sql/1060_*.sql` | Siete dimensiones, una por archivo |
+| `sql/1000_*.sql` a `sql/1090_*.sql` | Diez dimensiones, una por archivo |
 | `sql/2000_*.sql` a `sql/2050_*.sql` | Seis hechos, uno por proceso |
 | `sql/2900_periodos_reporte.sql` | Intervalos mensuales, opciones de filtros y vistas auxiliares |
 | `sql/3000_*.sql` a `sql/3040_*.sql` | Marts de ventas, productos, actividad, NPS y gráficos |
@@ -61,7 +61,7 @@ python run_sql.py --ui
 | `assets/capturas/` | Capturas del tablero |
 | `generator/` | Generador y controles originales del profesor; no hace falta regenerar el origen |
 
-Se conserva el ejemplo resuelto de `dim_product` del profesor. La jerarquía de categorías se aplana dentro de esa dimensión. Las direcciones y provincias de las tiendas también se aplanan. Las PK y FK del modelo están detalladas en el diccionario.
+Se conserva el ejemplo resuelto de `dim_product` del profesor. La jerarquía de categorías se aplana dentro de esa dimensión. Las direcciones y provincias de las tiendas también se aplanan. Medio de pago, fuente de tráfico y dispositivo tienen dimensiones propias. Sus claves apuntan a un miembro desconocido cuando falta el dato. Las PK y FK del modelo están detalladas en el diccionario.
 
 ## Arquitectura y decisiones
 

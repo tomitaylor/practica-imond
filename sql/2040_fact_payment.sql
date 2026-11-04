@@ -7,7 +7,7 @@ CREATE TABLE fact_payment (
     channel_key INTEGER NOT NULL REFERENCES dim_channel(channel_key),
     store_key INTEGER NOT NULL REFERENCES dim_store(store_key),
     province_key INTEGER REFERENCES dim_province(province_key),
-    method VARCHAR(20) NOT NULL,
+    payment_method_key INTEGER NOT NULL REFERENCES dim_payment_method(payment_method_key),
     status VARCHAR(20) NOT NULL,
     amount DECIMAL(12,2) NOT NULL,
     paid_at TIMESTAMP,
@@ -24,11 +24,11 @@ SELECT
     o.channel_key,
     o.store_key,
     o.province_key,
-    p.method,
+    COALESCE(payment_method.payment_method_key, -1),
     p.status,
     p.amount,
     p.paid_at,
     p.transaction_ref
 FROM raw.payment AS p
-JOIN fact_order AS o ON o.order_id = p.order_id;
-
+JOIN fact_order AS o ON o.order_id = p.order_id
+LEFT JOIN dim_payment_method AS payment_method ON payment_method.method = p.method;

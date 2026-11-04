@@ -250,7 +250,7 @@ El conjunto contiene un pago por pedido. date_key es la fecha del pedido y paid_
 | `channel_key` | `INTEGER` | No | FK → dim_channel.channel_key | Clave subrogada del canal comercial. |
 | `store_key` | `INTEGER` | No | FK → dim_store.store_key | Clave subrogada de tienda; -1 cuando no aplica o no se resuelve. |
 | `province_key` | `INTEGER` | Sí | FK → dim_province.province_key | Clave subrogada de provincia; puede ser nula si no se resuelve la localización. |
-| `method` | `VARCHAR(20)` | No | — | Método de pago: CASH, CARD, TRANSFER o GATEWAY; dominio de origen sin CHECK en este hecho. |
+| `payment_method_key` | `INTEGER` | No | FK → `dim_payment_method.payment_method_key` | Clave del valor de origen. `-1` representa un valor desconocido. |
 | `status` | `VARCHAR(20)` | No | — | Estado de pago: PENDING, PAID, FAILED o REFUNDED; dominio del origen, sin CHECK declarado. |
 | `amount` | `DECIMAL(12,2)` | No | — | Importe del registro de pago en ARS. |
 | `paid_at` | `TIMESTAMP` | Sí | — | Fecha y hora del pago; opcional. |
@@ -298,8 +298,8 @@ visitor_key permite contar identificados distintos y sesiones anónimas sin coli
 | `visitor_key` | `VARCHAR` | No | — | customer_<customer_id> si identificado; session_<session_id> si anónimo. |
 | `started_at` | `TIMESTAMP` | No | — | Inicio de la sesión; determina date_key. |
 | `ended_at` | `TIMESTAMP` | Sí | — | Fin de sesión; puede ser nulo. |
-| `source` | `VARCHAR(50)` | Sí | — | Fuente de tráfico: ads, direct, referral u organic en el conjunto; puede ser nula. |
-| `device` | `VARCHAR(30)` | Sí | — | Dispositivo registrado en el origen; puede ser nulo. |
+| `traffic_source_key` | `INTEGER` | No | FK → `dim_traffic_source.traffic_source_key` | Clave del valor de origen. `-1` representa un valor desconocido. |
+| `device_key` | `INTEGER` | No | FK → `dim_device.device_key` | Clave del valor de origen. `-1` representa un valor desconocido. |
 
 ## mart_activity
 
@@ -436,6 +436,33 @@ El canal o provincia vacíos indican total. Esas filas no deben sumarse con las 
 | `ticket_promedio` | `DOUBLE` | Sí | — | Ventas / pedidos válidos, redondeado a dos decimales; NULL si no hay pedidos. |
 | `ticket_miles` | `DOUBLE` | Sí | — | Ventas / pedidos válidos / 1.000; NULL si no hay pedidos. |
 | `ancho_barra` | `DOUBLE` | Sí | — | Porcentaje respecto de la provincia con más ventas del intervalo y canal; 0 a 100. NULL en fila total de provincias. |
+
+## dim_payment_method
+
+**Grano:** un valor distinto de `raw.payment.method` y un miembro desconocido.
+
+| Columna | Tipo | Nulo | Clave | Dominio |
+|---|---|---|---|---|
+| `payment_method_key` | `INTEGER` | No | PK | Clave subrogada. `-1` identifica al miembro desconocido. |
+| `method` | `VARCHAR(20)` | Sí | Única | Valor natural del CSV de origen. Nulo para el miembro desconocido. |
+
+## dim_traffic_source
+
+**Grano:** un valor distinto de `raw.web_session.source` y un miembro desconocido.
+
+| Columna | Tipo | Nulo | Clave | Dominio |
+|---|---|---|---|---|
+| `traffic_source_key` | `INTEGER` | No | PK | Clave subrogada. `-1` identifica al miembro desconocido. |
+| `source` | `VARCHAR(50)` | Sí | Única | Valor natural del CSV de origen. Nulo para el miembro desconocido. |
+
+## dim_device
+
+**Grano:** un valor distinto de `raw.web_session.device` y un miembro desconocido.
+
+| Columna | Tipo | Nulo | Clave | Dominio |
+|---|---|---|---|---|
+| `device_key` | `INTEGER` | No | PK | Clave subrogada. `-1` identifica al miembro desconocido. |
+| `device` | `VARCHAR(30)` | Sí | Única | Valor natural del CSV de origen. Nulo para el miembro desconocido. |
 
 ## Criterios de modelado y uso
 

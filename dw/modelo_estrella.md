@@ -26,6 +26,8 @@ erDiagram
     dim_date ||--o{ fact_shipment : "delivered_date_key"
     dim_date ||--o{ fact_shipment : "shipped_date_key"
     dim_date ||--o{ fact_web_session : "date_key"
+    dim_device ||--o{ fact_web_session : "device_key"
+    dim_payment_method ||--o{ fact_payment : "payment_method_key"
     dim_product ||--o{ fact_order_item : "product_key"
     dim_province ||--o{ fact_order : "province_key"
     dim_province ||--o{ fact_order_item : "province_key"
@@ -35,6 +37,7 @@ erDiagram
     dim_store ||--o{ fact_order_item : "store_key"
     dim_store ||--o{ fact_payment : "store_key"
     dim_store ||--o{ fact_shipment : "store_key"
+    dim_traffic_source ||--o{ fact_web_session : "traffic_source_key"
     dim_address {
         INTEGER address_key PK
         INTEGER address_id
@@ -73,6 +76,14 @@ erDiagram
         INTEGER day
         INTEGER day_of_week
     }
+    dim_device {
+        INTEGER device_key PK
+        VARCHAR device
+    }
+    dim_payment_method {
+        INTEGER payment_method_key PK
+        VARCHAR method
+    }
     dim_product {
         INTEGER product_key PK
         INTEGER product_id
@@ -96,6 +107,10 @@ erDiagram
         VARCHAR province
         VARCHAR postal_code
         VARCHAR country_code
+    }
+    dim_traffic_source {
+        INTEGER traffic_source_key PK
+        VARCHAR source
     }
     fact_nps {
         BIGINT nps_id PK
@@ -149,7 +164,7 @@ erDiagram
         INTEGER channel_key FK
         INTEGER store_key FK
         INTEGER province_key FK
-        VARCHAR method
+        INTEGER payment_method_key FK
         VARCHAR status
         DECIMAL amount
         TIMESTAMP paid_at
@@ -179,8 +194,8 @@ erDiagram
         VARCHAR visitor_key
         TIMESTAMP started_at
         TIMESTAMP ended_at
-        VARCHAR source
-        VARCHAR device
+        INTEGER traffic_source_key FK
+        INTEGER device_key FK
     }
     mart_activity {
         VARCHAR desde
