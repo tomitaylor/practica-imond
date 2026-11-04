@@ -4,7 +4,7 @@ function formato(valor) {
     });
 }
 
-function agregarTabla(contenedor, filas, columna, unidad) {
+function agregarTabla(contenedor, filas, unidad) {
     const detalle = document.createElement("details");
     const resumen = document.createElement("summary");
     resumen.textContent = "Ver datos";
@@ -22,7 +22,7 @@ function agregarTabla(contenedor, filas, columna, unidad) {
     const cuerpo = document.createElement("tbody");
     for (const fila of filas) {
         const tr = document.createElement("tr");
-        for (const texto of [fila.desde, formato(fila[columna])]) {
+        for (const texto of [fila.mes, formato(fila.valor ?? "")]) {
             const td = document.createElement("td");
             td.textContent = texto;
             tr.append(td);
@@ -34,7 +34,7 @@ function agregarTabla(contenedor, filas, columna, unidad) {
     contenedor.append(detalle);
 }
 
-function mostrarSerie(graficos, id, filas, columna, unidad) {
+function mostrarSerie(graficos, id, unidad) {
     const contenedor = document.getElementById(`grafico-${id}`);
     const grafico = graficos.find(fila => fila.grafico === id);
     contenedor.replaceChildren();
@@ -43,7 +43,7 @@ function mostrarSerie(graficos, id, filas, columna, unidad) {
         return;
     }
     contenedor.innerHTML = grafico.contenido;
-    agregarTabla(contenedor, filas, columna, unidad);
+    agregarTabla(contenedor, JSON.parse(grafico.datos_tabla), unidad);
 }
 
 function mostrarProvincias(filas) {
@@ -68,8 +68,8 @@ function mostrarProvincias(filas) {
 }
 
 export function mostrarGraficos(datos) {
-    mostrarSerie(datos.graficos, "ventas", datos.ventas, "ventas_totales", "ARS");
-    mostrarSerie(datos.graficos, "usuarios", datos.actividad, "usuarios_activos", "Usuarios activos");
-    mostrarSerie(datos.graficos, "nps", datos.encuestas, "nps", "NPS");
+    mostrarSerie(datos.graficos, "ventas", "ARS");
+    mostrarSerie(datos.graficos, "usuarios", "Usuarios activos");
+    mostrarSerie(datos.graficos, "nps", "NPS");
     mostrarProvincias(datos.provincias);
 }

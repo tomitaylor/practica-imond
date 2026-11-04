@@ -22,7 +22,7 @@ Por ejemplo, un cliente identificado que aparece en enero y febrero cuenta una s
 | `mart_activity` | Un intervalo | Usuarios distintos, identificados, sesiones anónimas y usuarios en miles |
 | `mart_nps` | Intervalo y canal | Respuestas, promotores, detractores y NPS |
 | `mart_products` | Mes, canal, provincia y producto | Unidades, ventas y posición mensual |
-| `mart_charts` | Intervalo, canal, provincia y tipo de gráfico | SVG terminado desde SQL |
+| `mart_charts` | Intervalo, canal, provincia y tipo de gráfico | SVG y filas de «Ver datos» para el mismo corte, preparados desde SQL |
 
 Las vistas `ventas_diarias` y `nps_diario` exponen componentes sumables en un grano diario sin subtotales. El ETL calcula ticket y NPS después de agregar esos componentes. Usuarios activos se recalcula como distinto para cada intervalo. Los marts exportados representan resultados de presentación para una combinación exacta de filtros. Las tablas de métricas y gráficos se generan a partir de vistas de reporte con origen en hechos y dimensiones.
 

@@ -53,8 +53,6 @@ function actualizar(datos) {
     }
 
     const periodo = fila => fila.desde === desde && fila.hasta === hasta;
-    const mensual = fila => fila.desde === fila.hasta &&
-        fila.desde >= desde && fila.desde <= hasta;
     const ventas = datos.mart_sales.find(fila => periodo(fila) &&
         fila.canal === canal && fila.provincia === provincia);
     const actividad = datos.mart_activity.find(periodo);
@@ -83,10 +81,6 @@ function actualizar(datos) {
             (fila.grafico === "usuarios") ||
             (fila.grafico === "nps" && fila.canal === canal)
         )),
-        ventas: datos.mart_sales.filter(fila => mensual(fila) &&
-            fila.canal === canal && fila.provincia === provincia),
-        actividad: datos.mart_activity.filter(mensual),
-        encuestas: datos.mart_nps.filter(fila => mensual(fila) && fila.canal === canal),
         provincias: datos.mart_sales.filter(fila => periodo(fila) &&
             fila.canal === canal && fila.provincia !== "" &&
             (!provincia || fila.provincia === provincia))

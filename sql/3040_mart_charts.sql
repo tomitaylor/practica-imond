@@ -1,15 +1,15 @@
 CREATE TABLE mart_charts AS
 WITH series AS (
     SELECT p.desde, p.hasta, m.canal, m.provincia, 'ventas' AS grafico,
-           m.desde AS mes, m.ventas_millones AS valor
+           m.desde AS mes, m.ventas_millones AS valor, m.ventas_totales::VARCHAR AS valor_tabla
     FROM reporte_periodos AS p
     JOIN reporte_sales AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
     UNION ALL
-    SELECT p.desde, p.hasta, '', '', 'usuarios', m.desde, m.usuarios_activos
+    SELECT p.desde, p.hasta, '', '', 'usuarios', m.desde, m.usuarios_activos, m.usuarios_activos::VARCHAR
     FROM reporte_periodos AS p
     JOIN reporte_activity AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
     UNION ALL
-    SELECT p.desde, p.hasta, m.canal, '', 'nps', m.desde, m.nps
+    SELECT p.desde, p.hasta, m.canal, '', 'nps', m.desde, m.nps, m.nps::VARCHAR
     FROM reporte_periodos AS p
     JOIN reporte_nps AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
 ), escalas AS (
@@ -45,6 +45,7 @@ WITH series AS (
 ), detalles AS (
     SELECT desde, hasta, canal, provincia, grafico, minimo, maximo,
            COUNT(valor) AS valores,
+           to_json(list(struct_pack(mes := mes, valor := valor_tabla) ORDER BY mes)) AS datos_tabla,
            STRING_AGG(
                CASE WHEN valor IS NULL THEN '' ELSE
                    '<circle cx="' || x || '" cy="' || y ||
@@ -74,7 +75,8 @@ WITH series AS (
 SELECT d.desde, d.hasta, d.canal, d.provincia, d.grafico,
        CASE WHEN d.valores = 0 THEN '<p>Sin datos para estos filtros.</p>' ELSE
            '<svg viewBox="0 0 600 300" role="img" aria-label="Serie mensual; consultar tabla de datos">' ||
-           e.ejes || COALESCE(c.lineas, '') || d.marcas || '</svg>' END AS contenido
+           e.ejes || COALESCE(c.lineas, '') || d.marcas || '</svg>' END AS contenido,
+       d.datos_tabla
 FROM detalles AS d
 JOIN ejes AS e USING (desde, hasta, canal, provincia, grafico)
 LEFT JOIN caminos AS c USING (desde, hasta, canal, provincia, grafico)
