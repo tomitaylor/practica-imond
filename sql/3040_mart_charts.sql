@@ -2,16 +2,16 @@ CREATE TABLE mart_charts AS
 WITH series AS (
     SELECT p.desde, p.hasta, m.canal, m.provincia, 'ventas' AS grafico,
            m.desde AS mes, m.ventas_millones AS valor
-    FROM mart_periods AS p
-    JOIN mart_sales AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
+    FROM reporte_periodos AS p
+    JOIN reporte_sales AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
     UNION ALL
     SELECT p.desde, p.hasta, '', '', 'usuarios', m.desde, m.usuarios_activos
-    FROM mart_periods AS p
-    JOIN mart_activity AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
+    FROM reporte_periodos AS p
+    JOIN reporte_activity AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
     UNION ALL
     SELECT p.desde, p.hasta, m.canal, '', 'nps', m.desde, m.nps
-    FROM mart_periods AS p
-    JOIN mart_nps AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
+    FROM reporte_periodos AS p
+    JOIN reporte_nps AS m ON m.desde = m.hasta AND m.desde BETWEEN p.desde AND p.hasta
 ), escalas AS (
     SELECT *, ROW_NUMBER() OVER ventana AS indice,
            COUNT(*) OVER grupo AS cantidad,

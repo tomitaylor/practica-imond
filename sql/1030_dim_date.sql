@@ -1,11 +1,11 @@
 CREATE TABLE dim_date (
     date_key INTEGER PRIMARY KEY,
-    full_date DATE NOT NULL UNIQUE,
-    year INTEGER NOT NULL,
-    quarter INTEGER NOT NULL,
-    month INTEGER NOT NULL,
-    day INTEGER NOT NULL,
-    day_of_week INTEGER NOT NULL
+    full_date DATE UNIQUE,
+    year INTEGER,
+    quarter INTEGER,
+    month INTEGER,
+    day INTEGER,
+    day_of_week INTEGER
 );
 
 INSERT INTO dim_date
@@ -22,3 +22,5 @@ FROM range(
     DATE '2026-01-01',
     INTERVAL 1 DAY
 ) AS calendario(fecha);
+
+INSERT INTO dim_date VALUES (-1, NULL, NULL, NULL, NULL, NULL, NULL);

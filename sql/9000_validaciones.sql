@@ -31,7 +31,7 @@ SELECT
 
 SELECT
     s.ventas_totales AS ventas_mart,
-    (SELECT SUM(total_amount) FROM fact_order
+    (SELECT SUM(total_amount) FROM fact_order JOIN dim_order_status USING (order_status_key)
      WHERE status IN ('PAID', 'FULFILLED')) AS ventas_modelo,
     (SELECT SUM(ventas_producto) FROM mart_products
      WHERE canal = '' AND provincia = '') AS productos_mart,

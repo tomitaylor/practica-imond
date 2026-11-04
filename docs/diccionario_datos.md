@@ -1,6 +1,6 @@
 # Diccionario de datos del modelo EcoBottle AR
 
-Corresponde a las dimensiones, hechos y marts del commit `21ebfe1`. Describe el modelo implementado; las tablas de origen se explican en el README del profesor.
+Corresponde a las dimensiones, hechos y marts del proyecto. Describe el modelo implementado; las tablas de origen se explican en el README del profesor.
 
 ## Convenciones
 
@@ -19,9 +19,9 @@ Corresponde a las dimensiones, hechos y marts del commit `21ebfe1`. Describe el 
 | `dim_address` | 3.830 | Una dirección del origen, más el miembro desconocido de clave -1. |
 | `dim_channel` | 2 | Un canal de venta. |
 | `dim_customer` | 3.472 | Un cliente del origen, más el miembro desconocido de clave -1. |
-| `dim_date` | 731 | Un día del calendario. |
+| `dim_date` | 732 | Un día del calendario o el miembro sin fecha. |
 | `dim_product` | 2 | Un producto, con categoría y familia aplanadas. |
-| `dim_province` | 4 | Una provincia. |
+| `dim_province` | 5 | Una provincia o el miembro sin provincia. |
 | `dim_store` | 5 | Una tienda, más el miembro No aplica de clave -1. |
 | `fact_nps` | 3.083 | Una respuesta NPS. |
 | `fact_order` | 11.969 | Un pedido, identificado por order_id. |
@@ -104,12 +104,12 @@ Incluye 2024 y 2025 completos (731 días). Los hechos del conjunto llegan hasta 
 | Columna | Tipo | Admite NULL | Clave declarada | Significado y dominio |
 |---|---|:---:|---|---|
 | `date_key` | `INTEGER` | No | PK | Clave primaria del calendario en formato YYYYMMDD. |
-| `full_date` | `DATE` | No | UNIQUE | Día calendario; único y obligatorio. |
-| `year` | `INTEGER` | No | — | Año del calendario. |
-| `quarter` | `INTEGER` | No | — | Trimestre: 1 a 4. |
-| `month` | `INTEGER` | No | — | Mes: 1 a 12. |
-| `day` | `INTEGER` | No | — | Día del mes: 1 a 31, según calendario. |
-| `day_of_week` | `INTEGER` | No | — | Día ISO: lunes 1 a domingo 7. |
+| `full_date` | `DATE` | Sí | UNIQUE | Atributo calendario. Nulo en la fila -1. |
+| `year` | `INTEGER` | Sí | — | Atributo calendario. Nulo en la fila -1. |
+| `quarter` | `INTEGER` | Sí | — | Atributo calendario. Nulo en la fila -1. |
+| `month` | `INTEGER` | Sí | — | Atributo calendario. Nulo en la fila -1. |
+| `day` | `INTEGER` | Sí | — | Atributo calendario. Nulo en la fila -1. |
+| `day_of_week` | `INTEGER` | Sí | — | Atributo calendario. Nulo en la fila -1. |
 
 ## dim_product
 
@@ -140,7 +140,7 @@ Buenos Aires, Córdoba, Santa Fe y Mendoza.
 | Columna | Tipo | Admite NULL | Clave declarada | Significado y dominio |
 |---|---|:---:|---|---|
 | `province_key` | `INTEGER` | No | PK | Clave subrogada de provincia. |
-| `province_id` | `INTEGER` | No | UNIQUE | Identificador de provincia en el origen. |
+| `province_id` | `INTEGER` | Sí | UNIQUE | Identificador de provincia en el origen. |
 | `name` | `VARCHAR(50)` | No | — | Nombre de provincia. |
 | `code` | `VARCHAR(10)` | Sí | UNIQUE | Código opcional de provincia. |
 
@@ -197,11 +197,11 @@ Conserva todos los estados. Solo PAID y FULFILLED se consideran ventas en los ma
 | `customer_key` | `INTEGER` | No | FK → dim_customer.customer_key | Clave subrogada del cliente; -1 para desconocido o anónimo. |
 | `channel_key` | `INTEGER` | No | FK → dim_channel.channel_key | Clave subrogada del canal comercial. |
 | `store_key` | `INTEGER` | No | FK → dim_store.store_key | Clave subrogada de tienda; -1 cuando no aplica o no se resuelve. |
-| `province_key` | `INTEGER` | Sí | FK → dim_province.province_key | Clave subrogada de provincia; puede ser nula si no se resuelve la localización. |
+| `province_key` | `INTEGER` | No | FK → dim_province.province_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
 | `billing_address_key` | `INTEGER` | No | FK → dim_address.address_key | Dirección de facturación; referencia a dim_address; -1 si ausente. |
 | `shipping_address_key` | `INTEGER` | No | FK → dim_address.address_key | Dirección de envío; referencia a dim_address; -1 si ausente. |
 | `order_date` | `TIMESTAMP` | No | — | Fecha y hora de creación del pedido. |
-| `status` | `VARCHAR(20)` | No | — | Estado de pedido: CREATED, PAID, CANCELLED, FULFILLED o REFUNDED; conservado del origen, sin CHECK declarado. |
+| `order_status_key` | `INTEGER` | No | FK → dim_order_status.order_status_key | Estado del origen. |
 | `currency_code` | `CHAR(3)` | No | — | Moneda del pedido; ARS en el conjunto. |
 | `subtotal` | `DECIMAL(12,2)` | No | — | Importe de productos después de descuentos, sin IVA ni envío; ARS. |
 | `tax_amount` | `DECIMAL(12,2)` | No | — | IVA del pedido en ARS; 21 % del subtotal en el conjunto. |
@@ -224,9 +224,9 @@ Hereda fecha, cliente, canal, tienda, provincia y estado del pedido. No repite s
 | `customer_key` | `INTEGER` | No | FK → dim_customer.customer_key | Clave subrogada del cliente; -1 para desconocido o anónimo. |
 | `channel_key` | `INTEGER` | No | FK → dim_channel.channel_key | Clave subrogada del canal comercial. |
 | `store_key` | `INTEGER` | No | FK → dim_store.store_key | Clave subrogada de tienda; -1 cuando no aplica o no se resuelve. |
-| `province_key` | `INTEGER` | Sí | FK → dim_province.province_key | Clave subrogada de provincia; puede ser nula si no se resuelve la localización. |
+| `province_key` | `INTEGER` | No | FK → dim_province.province_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
 | `product_key` | `INTEGER` | No | FK → dim_product.product_key | Clave subrogada del producto. |
-| `status` | `VARCHAR(20)` | No | — | Estado heredado del pedido: CREATED, PAID, CANCELLED, FULFILLED o REFUNDED; sin CHECK declarado. |
+| `order_status_key` | `INTEGER` | No | FK → dim_order_status.order_status_key | Estado del origen. |
 | `quantity` | `INTEGER` | No | — | Cantidad de unidades de la línea; CHECK mayor que cero. |
 | `unit_price` | `DECIMAL(12,2)` | No | — | Precio unitario de la línea, sin IVA; ARS. |
 | `discount_amount` | `DECIMAL(12,2)` | No | — | Descuento total de la línea en ARS. |
@@ -245,13 +245,13 @@ El conjunto contiene un pago por pedido. date_key es la fecha del pedido y paid_
 | `payment_id` | `BIGINT` | No | PK | Identificador único del registro de pago. |
 | `order_id` | `BIGINT` | No | — | Identificador del pedido en el origen. Referencia lógica a fact_order.order_id, sin FK física declarada. |
 | `date_key` | `INTEGER` | No | FK → dim_date.date_key | Fecha principal del hecho; YYYYMMDD; referencia al calendario. |
-| `paid_date_key` | `INTEGER` | Sí | FK → dim_date.date_key | Fecha calendario de paid_at; nula si no existe. |
+| `paid_date_key` | `INTEGER` | No | FK → dim_date.date_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
 | `customer_key` | `INTEGER` | No | FK → dim_customer.customer_key | Clave subrogada del cliente; -1 para desconocido o anónimo. |
 | `channel_key` | `INTEGER` | No | FK → dim_channel.channel_key | Clave subrogada del canal comercial. |
 | `store_key` | `INTEGER` | No | FK → dim_store.store_key | Clave subrogada de tienda; -1 cuando no aplica o no se resuelve. |
-| `province_key` | `INTEGER` | Sí | FK → dim_province.province_key | Clave subrogada de provincia; puede ser nula si no se resuelve la localización. |
+| `province_key` | `INTEGER` | No | FK → dim_province.province_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
 | `payment_method_key` | `INTEGER` | No | FK → `dim_payment_method.payment_method_key` | Clave del valor de origen. `-1` representa un valor desconocido. |
-| `status` | `VARCHAR(20)` | No | — | Estado de pago: PENDING, PAID, FAILED o REFUNDED; dominio del origen, sin CHECK declarado. |
+| `payment_status_key` | `INTEGER` | No | FK → dim_payment_status.payment_status_key | Estado del origen. |
 | `amount` | `DECIMAL(12,2)` | No | — | Importe del registro de pago en ARS. |
 | `paid_at` | `TIMESTAMP` | Sí | — | Fecha y hora del pago; opcional. |
 | `transaction_ref` | `VARCHAR(80)` | Sí | — | Referencia opcional de transacción. |
@@ -269,15 +269,15 @@ No todos los pedidos tienen envío. Se distinguen las fechas de pedido, despacho
 | `shipment_id` | `BIGINT` | No | PK | Identificador único del envío. |
 | `order_id` | `BIGINT` | No | — | Identificador del pedido en el origen. Referencia lógica a fact_order.order_id, sin FK física declarada. |
 | `date_key` | `INTEGER` | No | FK → dim_date.date_key | Fecha principal del hecho; YYYYMMDD; referencia al calendario. |
-| `shipped_date_key` | `INTEGER` | Sí | FK → dim_date.date_key | Fecha calendario de shipped_at; opcional. |
-| `delivered_date_key` | `INTEGER` | Sí | FK → dim_date.date_key | Fecha calendario de delivered_at; opcional. |
+| `shipped_date_key` | `INTEGER` | No | FK → dim_date.date_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
+| `delivered_date_key` | `INTEGER` | No | FK → dim_date.date_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
 | `customer_key` | `INTEGER` | No | FK → dim_customer.customer_key | Clave subrogada del cliente; -1 para desconocido o anónimo. |
 | `channel_key` | `INTEGER` | No | FK → dim_channel.channel_key | Clave subrogada del canal comercial. |
 | `store_key` | `INTEGER` | No | FK → dim_store.store_key | Clave subrogada de tienda; -1 cuando no aplica o no se resuelve. |
-| `province_key` | `INTEGER` | Sí | FK → dim_province.province_key | Clave subrogada de provincia; puede ser nula si no se resuelve la localización. |
-| `carrier` | `VARCHAR(40)` | Sí | — | Transportista; opcional. |
+| `province_key` | `INTEGER` | No | FK → dim_province.province_key | Clave de la dimensión correspondiente. -1 si no hay dato. |
+| `carrier_key` | `INTEGER` | No | FK → dim_carrier.carrier_key | Transportista. -1 si falta. |
 | `tracking_number` | `VARCHAR(60)` | Sí | — | Código de seguimiento; opcional. |
-| `status` | `VARCHAR(20)` | No | — | Estado de envío: READY, SHIPPED, DELIVERED o CANCELLED; dominio del origen, sin CHECK declarado. |
+| `shipment_status_key` | `INTEGER` | No | FK → dim_shipment_status.shipment_status_key | Estado del origen. |
 | `shipped_at` | `TIMESTAMP` | Sí | — | Fecha y hora de despacho; opcional. |
 | `delivered_at` | `TIMESTAMP` | Sí | — | Fecha y hora de entrega; opcional. |
 | `delivery_days` | `DECIMAL(12,4)` | Sí | — | Diferencia entre entrega y despacho en días, incluidos decimales; NULL si falta una fecha. |
@@ -463,6 +463,14 @@ El canal o provincia vacíos indican total. Esas filas no deben sumarse con las 
 |---|---|---|---|---|
 | `device_key` | `INTEGER` | No | PK | Clave subrogada. `-1` identifica al miembro desconocido. |
 | `device` | `VARCHAR(30)` | Sí | Única | Valor natural del CSV de origen. Nulo para el miembro desconocido. |
+
+## dim_order_status, dim_payment_status y dim_shipment_status
+
+Una fila por estado del proceso correspondiente, más el miembro desconocido. Cada tabla tiene su propia PK entera (`order_status_key`, `payment_status_key` o `shipment_status_key`) y un `status VARCHAR(20) UNIQUE` tomado del origen. La fila -1 tiene estado nulo.
+
+## dim_carrier
+
+Una fila por transportista de `raw.shipment`. `carrier_key` es una PK entera y `carrier VARCHAR(40) UNIQUE` conserva el valor del origen. La fila -1 tiene transportista nulo.
 
 ## Criterios de modelado y uso
 

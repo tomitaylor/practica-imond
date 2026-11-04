@@ -6,6 +6,7 @@ Generado por `run_sql.py` a partir de las tablas de `warehouse.duckdb`.
 erDiagram
     dim_address ||--o{ fact_order : "billing_address_key"
     dim_address ||--o{ fact_order : "shipping_address_key"
+    dim_carrier ||--o{ fact_shipment : "carrier_key"
     dim_channel ||--o{ fact_nps : "channel_key"
     dim_channel ||--o{ fact_order : "channel_key"
     dim_channel ||--o{ fact_order_item : "channel_key"
@@ -27,12 +28,16 @@ erDiagram
     dim_date ||--o{ fact_shipment : "shipped_date_key"
     dim_date ||--o{ fact_web_session : "date_key"
     dim_device ||--o{ fact_web_session : "device_key"
+    dim_order_status ||--o{ fact_order : "order_status_key"
+    dim_order_status ||--o{ fact_order_item : "order_status_key"
     dim_payment_method ||--o{ fact_payment : "payment_method_key"
+    dim_payment_status ||--o{ fact_payment : "payment_status_key"
     dim_product ||--o{ fact_order_item : "product_key"
     dim_province ||--o{ fact_order : "province_key"
     dim_province ||--o{ fact_order_item : "province_key"
     dim_province ||--o{ fact_payment : "province_key"
     dim_province ||--o{ fact_shipment : "province_key"
+    dim_shipment_status ||--o{ fact_shipment : "shipment_status_key"
     dim_store ||--o{ fact_order : "store_key"
     dim_store ||--o{ fact_order_item : "store_key"
     dim_store ||--o{ fact_payment : "store_key"
@@ -50,6 +55,10 @@ erDiagram
         VARCHAR postal_code
         VARCHAR country_code
         TIMESTAMP created_at
+    }
+    dim_carrier {
+        INTEGER carrier_key PK
+        VARCHAR carrier
     }
     dim_channel {
         INTEGER channel_key PK
@@ -80,9 +89,17 @@ erDiagram
         INTEGER device_key PK
         VARCHAR device
     }
+    dim_order_status {
+        INTEGER order_status_key PK
+        VARCHAR status
+    }
     dim_payment_method {
         INTEGER payment_method_key PK
         VARCHAR method
+    }
+    dim_payment_status {
+        INTEGER payment_status_key PK
+        VARCHAR status
     }
     dim_product {
         INTEGER product_key PK
@@ -98,6 +115,10 @@ erDiagram
         INTEGER province_id
         VARCHAR name
         VARCHAR code
+    }
+    dim_shipment_status {
+        INTEGER shipment_status_key PK
+        VARCHAR status
     }
     dim_store {
         INTEGER store_key PK
@@ -133,7 +154,7 @@ erDiagram
         INTEGER billing_address_key FK
         INTEGER shipping_address_key FK
         TIMESTAMP order_date
-        VARCHAR status
+        INTEGER order_status_key FK
         VARCHAR currency_code
         DECIMAL subtotal
         DECIMAL tax_amount
@@ -149,7 +170,7 @@ erDiagram
         INTEGER store_key FK
         INTEGER province_key FK
         INTEGER product_key FK
-        VARCHAR status
+        INTEGER order_status_key FK
         INTEGER quantity
         DECIMAL unit_price
         DECIMAL discount_amount
@@ -165,7 +186,7 @@ erDiagram
         INTEGER store_key FK
         INTEGER province_key FK
         INTEGER payment_method_key FK
-        VARCHAR status
+        INTEGER payment_status_key FK
         DECIMAL amount
         TIMESTAMP paid_at
         VARCHAR transaction_ref
@@ -180,9 +201,9 @@ erDiagram
         INTEGER channel_key FK
         INTEGER store_key FK
         INTEGER province_key FK
-        VARCHAR carrier
+        INTEGER carrier_key FK
         VARCHAR tracking_number
-        VARCHAR status
+        INTEGER shipment_status_key FK
         TIMESTAMP shipped_at
         TIMESTAMP delivered_at
         DECIMAL delivery_days

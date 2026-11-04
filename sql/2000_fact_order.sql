@@ -33,11 +33,11 @@ CREATE TABLE fact_order (
     customer_key INTEGER NOT NULL REFERENCES dim_customer(customer_key),
     channel_key INTEGER NOT NULL REFERENCES dim_channel(channel_key),
     store_key INTEGER NOT NULL REFERENCES dim_store(store_key),
-    province_key INTEGER REFERENCES dim_province(province_key),
+    province_key INTEGER NOT NULL REFERENCES dim_province(province_key),
     billing_address_key INTEGER NOT NULL REFERENCES dim_address(address_key),
     shipping_address_key INTEGER NOT NULL REFERENCES dim_address(address_key),
     order_date TIMESTAMP NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    order_status_key INTEGER NOT NULL REFERENCES dim_order_status(order_status_key),
     currency_code CHAR(3) NOT NULL,
     subtotal DECIMAL(12,2) NOT NULL,
     tax_amount DECIMAL(12,2) NOT NULL,
@@ -52,11 +52,11 @@ SELECT
     COALESCE(c.customer_key, -1),
     ch.channel_key,
     COALESCE(s.store_key, -1),
-    p.province_key,
+    COALESCE(p.province_key, -1),
     COALESCE(ba.address_key, -1),
     COALESCE(sa.address_key, -1),
     o.order_date,
-    o.status,
+    COALESCE(order_status.order_status_key, -1),
     o.currency_code,
     o.subtotal,
     o.tax_amount,
@@ -69,9 +69,5 @@ LEFT JOIN dim_store AS s ON s.store_id = o.store_id
 LEFT JOIN raw.address AS a ON a.address_id = o.shipping_address_id
 LEFT JOIN dim_province AS p ON p.province_id = a.province_id
 LEFT JOIN dim_address AS ba ON ba.address_id = o.billing_address_id
-LEFT JOIN dim_address AS sa ON sa.address_id = o.shipping_address_id;
-
-
-
-
-
+LEFT JOIN dim_address AS sa ON sa.address_id = o.shipping_address_id
+LEFT JOIN dim_order_status AS order_status ON order_status.status = o.status;

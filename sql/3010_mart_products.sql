@@ -9,7 +9,7 @@ WITH productos AS (
     JOIN dim_channel AS c ON c.channel_key = i.channel_key
     LEFT JOIN dim_province AS pr ON pr.province_key = i.province_key
     JOIN dim_product AS p ON p.product_key = i.product_key
-    WHERE i.status IN ('PAID', 'FULFILLED')
+    WHERE i.order_status_key IN (SELECT order_status_key FROM dim_order_status WHERE status IN ('PAID', 'FULFILLED'))
 ), agregados AS (
     SELECT mes, COALESCE(canal, '') AS canal,
            COALESCE(provincia, '') AS provincia, product_id, producto,

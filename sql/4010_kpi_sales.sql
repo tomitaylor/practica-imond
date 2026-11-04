@@ -3,6 +3,7 @@ SELECT
     SUM(total_amount) AS ventas_totales,
     ROUND(SUM(total_amount) / NULLIF(COUNT(*), 0), 2) AS ticket_promedio
 FROM fact_order
+JOIN dim_order_status USING (order_status_key)
 WHERE status IN ('PAID', 'FULFILLED');
 
 SELECT
@@ -17,7 +18,7 @@ SELECT
 FROM fact_order AS o
 JOIN dim_date AS d ON d.date_key = o.date_key
 JOIN dim_channel AS c ON c.channel_key = o.channel_key
-WHERE o.status IN ('PAID', 'FULFILLED')
+WHERE o.order_status_key IN (SELECT order_status_key FROM dim_order_status WHERE status IN ('PAID', 'FULFILLED'))
 GROUP BY mes, c.code
 ORDER BY mes, canal;
 
@@ -28,6 +29,6 @@ SELECT
 FROM fact_order AS o
 LEFT JOIN dim_province AS p
     ON p.province_key = o.province_key
-WHERE o.status IN ('PAID', 'FULFILLED')
+WHERE o.order_status_key IN (SELECT order_status_key FROM dim_order_status WHERE status IN ('PAID', 'FULFILLED'))
 GROUP BY p.name
 ORDER BY ventas_totales DESC;

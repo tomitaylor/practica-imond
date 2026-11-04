@@ -8,7 +8,7 @@ WITH ventas_producto AS (
     FROM fact_order_item AS i
     JOIN dim_date AS d ON d.date_key = i.date_key
     JOIN dim_product AS p ON p.product_key = i.product_key
-    WHERE i.status IN ('PAID', 'FULFILLED')
+    WHERE i.order_status_key IN (SELECT order_status_key FROM dim_order_status WHERE status IN ('PAID', 'FULFILLED'))
     GROUP BY mes, p.product_key, p.name
 )
 SELECT
