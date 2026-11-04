@@ -79,7 +79,7 @@ Los filtros trabajan con meses completos. Para los 21 meses disponibles se preca
 | Usuarios activos | Distintos de `visitor_key`: cliente identificado o identificador de sesión si es anónima |
 | Ticket promedio | Ventas totales / cantidad de pedidos válidos de la misma selección |
 | NPS | Promedio de valores 1, 0 y -1 para promotores, pasivos y detractores, multiplicado por 100 |
-| Ventas por provincia | Provincia de la dirección de envío del pedido; en las compras en tienda corresponde a su dirección |
+| Ventas por provincia | Provincia de la dirección de envío registrada en el pedido, también para las compras en tienda con entrega a domicilio |
 | Ranking mensual | Ventas por producto después de descuentos, sin IVA ni envío; puestos con `DENSE_RANK` |
 
 Los hechos conservan todos los estados; los marts de ventas y productos excluyen pedidos creados, cancelados y reembolsados. Se usan miembros de clave -1 para cliente desconocido, dirección desconocida y tienda No aplica. No se descartan compras históricas de clientes inactivos.

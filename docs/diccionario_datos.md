@@ -324,7 +324,7 @@ Los distintos se resuelven para cada intervalo; no se suman distintos mensuales 
 
 **Grano:** Un gráfico para un intervalo y combinación aplicable de filtros.
 
-**Origen:** mart_sales, mart_activity, mart_nps y mart_periods.
+**Origen:** vistas `reporte_sales`, `reporte_activity`, `reporte_nps` y `reporte_periodos`.
 
 **Clave lógica:** `desde, hasta, canal, provincia, grafico`. No hay restricciones PK/FK declaradas.
 
@@ -338,6 +338,7 @@ El SVG terminado contiene valores, ejes, coordenadas y trazos calculados en SQL.
 | `provincia` | `VARCHAR` | Sí | — | Nombre de provincia; cadena vacía para todas; Sin provincia si no se resuelve en los hechos. |
 | `grafico` | `VARCHAR` | Sí | — | Tipo de serie: ventas, usuarios o nps. |
 | `contenido` | `VARCHAR` | Sí | — | SVG generado por SQL, o mensaje HTML cuando no hay datos. |
+| `datos_tabla` | `JSON` | Sí | — | Lista ordenada por mes para «Ver datos». Cada objeto contiene `mes` (YYYY-MM) y `valor` (texto numérico o null si falta el dato). Ventas se expresa en ARS, usuarios como conteo y NPS en puntos. |
 
 ## mart_filters
 

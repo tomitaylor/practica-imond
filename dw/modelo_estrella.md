@@ -233,6 +233,7 @@ erDiagram
         VARCHAR provincia
         VARCHAR grafico
         VARCHAR contenido
+        JSON datos_tabla
     }
     mart_filters {
         VARCHAR tipo
